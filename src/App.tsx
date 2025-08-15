@@ -1,51 +1,105 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import { invoke } from "@tauri-apps/api/core";
+import { AppShell, Group, ActionIcon, Burger, Text, MediaQuery, Navbar, Header } from "@mantine/core";
 import "./App.css";
-
+import Home from "./Home.tsx";
+import { MemoryRouter, NavLink, Route, Routes } from "react-router-dom";
+import { createStyles, useMantineTheme } from "@mantine/styles";
+import { MantineProvider } from "@mantine/core";
+import { SunIcon, MoonIcon } from "@modulz/radix-icons";
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+  const views = [{
+    path: '/',
+    name: 'Home',
+    exact: true, //opcional!!
+    component: Home
+  /* 
+  }, {
+    acá para agregar otro elemento
+  }
+  */
+  }]
 
-  async function greet() {
-    // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
-    setGreetMsg(await invoke("greet", { name }));
+  const [opened, setOpened] = useState(false)
+  const defaultColorScheme = 'dark'
+  const [colorScheme, setColorScheme] = useState(defaultColorScheme)
+  
+  const toggleColorScheme = (value?: 'light' | 'dark') => { //cambia entre oscuro y light
+    const newValue = value || (colorScheme === 'dark' ? 'light' : 'dark')
+    setColorScheme(newValue)
   }
 
+  const useStyles = createStyles((theme) => ({
+    navLink: { //es css para que los botones se vean diferentes cuando pasamos el cursor por encima, o está la seccion seleccionada
+      display: 'block',
+      width: '100%',
+      padding: theme.spacing.xs,
+      borderRadius: theme.radius.sm, //controla los bordes -> .md para bordes redondeados, .lg para MÁS redondeados
+      color: colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
+      textDecoration: 'none', //si se comenta, se ven como links, ej.: Home aparecería subrayado
+
+      '&:hover': {
+        backgroundColor: colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[1], 
+      }
+    },
+    navLinkActive: {
+      backgroundColor: colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[1],
+    }
+  }))
+
+  const { classes } = useStyles()
+  
   return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
-
-      <div className="row">
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg" className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
+    <MantineProvider
+      theme={{fontFamily: 'Open Sans, sans serif', colorScheme: colorScheme }}
+      withGlobalStyles
+    >
+      <MemoryRouter>
+      <AppShell padding="md" navbarOffsetBreakpoint="sm" fixed
+      navbar = {
+        <Navbar width={{sm: 200}} padding="xs" hidden={!opened} hiddenBreakoint="sm">
+          {
+            views.map((view, index) =>
+              <NavLink to={view.path} key={index} onClick={() => setOpened(false)} className={({ isActive }) => classes.navLink + ' ' + (isActive ? classes.navLinkActive: '')}>
+                <Group><Text>{view.name}</Text></Group>
+              </NavLink>
+            )
+          }
+        </Navbar>
+      } 
+      header = {
+        <Header height={70} padding="md">
+          <div style={{display: 'flex', alignItems: 'center', height: '100%'}}>
+            <MediaQuery largerThan="sm" styles={{ display: 'none'}}>
+              <Burger
+                opened={opened}
+                onClick={() => setOpened((o) => !o)}
+                size="sm"
+                color={useMantineTheme().colors.gray[6]}
+                mr="xl"
+              />
+            </MediaQuery>
+            <h4>MiniNotes</h4>
+            <div style={{marginLeft: "auto"}}>
+              <ActionIcon variant="default" onClick={() => toggleColorScheme()} size={30}>
+                {colorScheme === 'dark' ? <SunIcon /> : <MoonIcon/>}
+              </ActionIcon>
+            </div>
+          </div>
+        </Header>
+      } 
+      styles = {theme => ({
+        main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
+      })}
       >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
+        <Routes>
+          {
+            views.map((view, index) => <Route key={index} exact={view.exact} path={view.path} element={<view.component />} />)
+          }
+        </Routes>
+      </AppShell>
+      </MemoryRouter>
+    </MantineProvider>
   );
 }
 
