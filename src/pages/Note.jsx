@@ -1,7 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom"
 import Atras from "../assets/atras.png"
 import Basura from "../assets/basura.png"
-import BotonAbajo from "../components/BotonAbajo.jsx";
 import notasprueba from "../repository/repository.js";
 
 export default function Note(){
@@ -24,7 +23,7 @@ export default function Note(){
         <h1 style={{ display: "flex", gap: "0" }}>
           {nota.titulo}
           <button className="boton boton-arriba" style={{ right: "120px"  }} onClick={handlerDeletion}>
-            <img src={Basura} alt= "Volver" />
+            <img src={Basura} alt= "Eliminar" />
           </button>
           <button className="boton boton-arriba" onClick={()=>navigate(-1)}>
             <img src={Atras} alt= "Volver" />
