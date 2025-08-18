@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
-import { findAllNotas, addNota, getOneNota } from "./nota/nota.controller.ts";
+import { findAllNotas, addNota, getOneNota, putNota, deleteNota } from "./nota/nota.controller.ts";
 import { Nota } from "./nota/nota.entity.ts";
 import { BaseDirectory, exists, mkdir } from "@tauri-apps/plugin-fs";
 
@@ -12,6 +12,10 @@ function App() {
   const [notas, setNotas] = useState<Nota[]>([])
   const [notaId, setNotaId] = useState("");
   const [notaEncontrada, setNotaEncontrada] = useState<Nota | null>(null);
+  const [modId, setModId] = useState("");
+  const [modTitulo, setModTitulo] = useState("");
+  const [modContenido, setModContenido] = useState("");
+  const [delId, setDelId] = useState("");
 
   useEffect(() => {
     const inicializarApp = async () => {
@@ -60,6 +64,31 @@ function App() {
     } catch (error) {
       setNotaEncontrada(null);
       setMensaje("Error al buscar la nota.");
+      console.error(`Error: ${error}`);
+    }
+  };
+  const handleModificarNota = async () => {
+    try {
+      await putNota(modId, modTitulo, modContenido);
+      setMensaje("¡Nota modificada correctamente!");
+      setModId("");
+      setModTitulo("");
+      setModContenido("");
+      obtenerNotas();
+    } catch (error) {
+      setMensaje("Error al modificar la nota.");
+      console.error(`Error: ${error}`);
+    }
+  };
+
+  const handleEliminarNota = async () => {
+    try {
+      await deleteNota(delId);
+      setMensaje("¡Nota eliminada correctamente!");
+      setDelId("");
+      obtenerNotas();
+    } catch (error) {
+      setMensaje("Error al eliminar la nota.");
       console.error(`Error: ${error}`);
     }
   };
@@ -112,6 +141,39 @@ function App() {
           <strong>{notaEncontrada.nombre}</strong>: {notaEncontrada.contenido}
         </div>
       )}
+      <h2>Modificar nota</h2>
+      <input
+        type="text"
+        value={modId}
+        onChange={(e) => setModId(e.target.value)}
+        placeholder="ID de la nota a modificar"
+        style={{ width: "100%" }}
+      />
+      <input
+        type="text"
+        value={modTitulo}
+        onChange={(e) => setModTitulo(e.target.value)}
+        placeholder="Nuevo nombre de la nota"
+        style={{ width: "100%" }}
+      />
+      <textarea
+        value={modContenido}
+        onChange={(e) => setModContenido(e.target.value)}
+        placeholder="Nuevo contenido de la nota"
+        rows={3}
+        style={{ width: "100%" }}
+      />
+      <button type="button" onClick={handleModificarNota}>Modificar nota</button>
+
+      <h2>Eliminar nota</h2>
+      <input
+        type="text"
+        value={delId}
+        onChange={(e) => setDelId(e.target.value)}
+        placeholder="ID de la nota a eliminar"
+        style={{ width: "100%" }}
+      />
+      <button type="button" onClick={handleEliminarNota}>Eliminar nota</button>
     </main>
   );
 }
