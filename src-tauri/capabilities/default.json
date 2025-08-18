@@ -11,6 +11,7 @@
       "identifier": "fs:allow-create",
       "allow": [{ "path": "$APPDATA/*"}]
     },
-    "fs:allow-write"
+    "fs:allow-write",
+    "fs:scope-appdata-index"
   ]
 }
