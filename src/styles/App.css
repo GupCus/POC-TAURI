@@ -121,23 +121,42 @@ h1 {
   justify-content: center;
 }
 
+
 /* Estilos mininotas */
 .mininote {
+  position: relative;
   background: var(--yellow-100);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 12px 14px;
+  padding: 14px 12px 14px 12px;
   min-height: 120px;
   text-align: left;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, .08);
-  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
   cursor: pointer;
+  border-radius: 3px;
+  
+  /*animación*/
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
 }
 
+/*Forma de nota de la mininota*/
+.mininote::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-width: 0 20px 20px 0;
+  border-style: solid;
+  border-color: var(--yellow-250) var(--yellow-250) transparent transparent;
+  /* Sombra del bordcito */
+  box-shadow: -2px 2px 2px rgba(0, 0, 0, 0.1);
+  /*animación*/
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+}
+
+/*Efecto de mouse*/
 .mininote:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, .15);
-  border-color: var(--yellow-400);
+}
+.mininote:hover::before {
+  transform: translateY(-1px);
 }
 
 .mininote h3 {
@@ -203,7 +222,7 @@ h1 {
   opacity: 0.5;
 }
 
-/*Modo oscuro*/
+
 @media (prefers-color-scheme: dark) {
   :root {
     --bg-dark: #716536;
@@ -236,12 +255,13 @@ h1 {
   }
   .mininote {
     background: var(--yellow-300);
+    border-color: var(--bg-dark) var(--bg-dark) transparent transparent;
+  }
+  .mininote::before {
+    border-color: var(--bg-dark) var(--bg-dark) transparent transparent;
   }
   .nota {
     background: var(--yellow-300);
-  }
-  .mininote:hover {
-    border-color: var(--yellow-400);
   }
   .boton{
     background-color: var(--boton-dark);
@@ -250,5 +270,6 @@ h1 {
     background: var(--boton-hover-dark);
   }
 }
+
 
 
