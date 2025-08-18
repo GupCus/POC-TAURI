@@ -23,7 +23,7 @@
          "identifier": "my-capability",
           "description": "My application capability used for all windows",
           "windows": ["*"],
-          "permissions": ["fs:allow-create"]
+          "permissions": ["fs:allow-create", "fs:allow-read-text-file"]
       },
       "default"
     ]

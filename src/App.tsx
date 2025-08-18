@@ -1,12 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
-import { allNotas, crearNota } from "./lib/crearnota.ts";
+import { allNotas, crearNota, Nota } from "./lib/notaClass.ts";
+import { BaseDirectory, exists, mkdir } from "@tauri-apps/plugin-fs";
+
 
 function App() {
   const [titulo, setTitulo] = useState("")
   const [contenido, setContenido] = useState("");
   const [mensaje, setMensaje] = useState("");
-  const [notas, setNotas] = useState<string[]>([])
+  const [notas, setNotas] = useState<Nota[]>([])
+  const [appPath, setAppPath] = useState("")
+
+  useEffect(() => {
+    const inicializarApp = async () => {
+      try{
+        const appDataPath = await BaseDirectory.AppData
+        const folderExists = await exists('',{
+          baseDir: appDataPath
+        })
+        console.log(`Checkeando existencia de la carpeta de la app...`)
+        console.log(`${folderExists}`)
+        if(!folderExists) {
+          await mkdir('', {baseDir: appDataPath})
+          console.log(`Carpeta creada.`)
+        } else {
+          console.log(`Carpeta ya existe.`)
+        }
+        
+        
+      } catch(error) {
+        console.error(`Error al ejecutar inicializarApp(): ${error}`)
+      }
+    }
+    inicializarApp()
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,11 +45,12 @@ function App() {
       setContenido("");
     } catch (error) {
       setMensaje("Error al guardar la nota.");
+      console.error(`Error: ${error}`)
     }
   };
   const obtenerNotas = async () => {
-    const nombres = await allNotas()
-    setNotas(nombres ?? [])
+    const notasArray = await allNotas()
+    setNotas(notasArray ?? [])
   }
 
   return (
@@ -52,8 +80,10 @@ function App() {
       <h2>notas existentes</h2>
       <button type="button" onClick={obtenerNotas}>obtener notas</button>
       <ul>
-        {notas.map((nombre) => (
-          <li key={nombre}>{nombre}</li>
+        {notas.map((nota) => (
+          <li key={nota.id}>
+            <strong>{nota.nombre}</strong>: {nota.contenido}
+          </li>
         ))}
       </ul>
       <div></div>

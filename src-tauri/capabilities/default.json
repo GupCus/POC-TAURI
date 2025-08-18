@@ -12,6 +12,10 @@
       "allow": [{ "path": "$APPDATA/*"}]
     },
     "fs:allow-write",
-    "fs:scope-appdata-index"
+    "fs:scope-appdata-index",
+    {
+      "identifier": "fs:allow-read-text-file",
+      "allow": [{ "path": "$APPDATA/*"}]
+    }
   ]
 }
