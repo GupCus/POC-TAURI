@@ -1,7 +1,14 @@
-import { create } from "@tauri-apps/plugin-fs";
+import { create, BaseDirectory, mkdir } from "@tauri-apps/plugin-fs";
 
 export const crearJSON = async(nombre: string, contenido: any): Promise<void> => {
-    try {
-        //crear el contenido y devolver un json, o ver si hacer una funcion de guardado propia con la documentacion de tauri
+    try{
+        const archivo = await create(`${nombre}`, {
+            baseDir: BaseDirectory.AppData
+        })
+        await archivo.write(new TextEncoder().encode(`${contenido}`))
+        await archivo.close()
+        console.log(`Nota guardada correctamente en ${BaseDirectory.AppData}`)
+    } catch(error) {
+        console.log(`Error ${error}`)
     }
 }

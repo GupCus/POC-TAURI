@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./App.css";
-import { guardarJSON } from "./lib/storage.ts";
+import { crearJSON } from "./lib/crearnota.ts";
 
 function App() {
   const [contenido, setContenido] = useState("");
@@ -11,7 +11,7 @@ function App() {
     try {
       // Guarda la nota con un nombre único (puedes cambiar la lógica si lo deseas)
       const filename = `nota_${Date.now()}.json`;
-      await guardarJSON(filename, { contenido });
+      await crearJSON(filename, contenido);
       setMensaje("¡Nota guardada correctamente!");
       setContenido("");
     } catch (error) {

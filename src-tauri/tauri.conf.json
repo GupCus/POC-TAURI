@@ -18,7 +18,15 @@
       }
     ],
     "security": {
-      "csp": null
+      "csp": null,
+      "capabilities": [{
+         "identifier": "my-capability",
+          "description": "My application capability used for all windows",
+          "windows": ["*"],
+          "permissions": ["fs:allow-create"]
+      },
+      "default"
+    ]
     }
   },
   "bundle": {
