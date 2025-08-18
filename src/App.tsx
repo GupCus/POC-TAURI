@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
-import { allNotas, crearNota, Nota } from "./lib/notaClass.ts";
+import { findAllNotas, addNota } from "./nota/nota.controller.ts";
+import { Nota } from "./nota/nota.entity.ts";
 import { BaseDirectory, exists, mkdir } from "@tauri-apps/plugin-fs";
 
 
@@ -9,7 +10,6 @@ function App() {
   const [contenido, setContenido] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [notas, setNotas] = useState<Nota[]>([])
-  const [appPath, setAppPath] = useState("")
 
   useEffect(() => {
     const inicializarApp = async () => {
@@ -40,7 +40,7 @@ function App() {
     try {
       const tituloCorregido = titulo.endsWith('.json') ? titulo : `${titulo}.json`
       // Guarda la nota con nombre indicado, con '.json' al final
-      await crearNota(tituloCorregido, contenido);
+      await addNota(tituloCorregido, contenido);
       setMensaje("¡Nota guardada correctamente!");
       setContenido("");
     } catch (error) {
@@ -49,7 +49,7 @@ function App() {
     }
   };
   const obtenerNotas = async () => {
-    const notasArray = await allNotas()
+    const notasArray = await findAllNotas()
     setNotas(notasArray ?? [])
   }
 

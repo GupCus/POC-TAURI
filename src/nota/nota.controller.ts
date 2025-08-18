@@ -1,17 +1,17 @@
-import { create, BaseDirectory, readDir, readTextFile, readFile} from "@tauri-apps/plugin-fs";
+import { Nota } from "./nota.entity.ts"
+import { BaseDirectory, create, readDir, readTextFile } from "@tauri-apps/plugin-fs"
 
-export class Nota {
-    constructor(
-        public id: string,
-        public nombre: string,
-        public contenido: string
-    ) {}
+
+async function contarNotas() {
+    const arrayNotas = await readDir('', {baseDir: BaseDirectory.AppData})
+    return arrayNotas.length
 }
 
-export const crearNota = async(nomb: string, contenido: string): Promise<void> => {
-    const idNota = (Math.random() * 100)
+export const addNota = async(nomb: string, contenido: string): Promise<void> => {
+    //const id = Date.now()
+    const idNota = await contarNotas()
     const nota = new Nota(
-            idNota.toString(),
+            idNota,
             nomb,
             contenido
         )
@@ -24,23 +24,24 @@ export const crearNota = async(nomb: string, contenido: string): Promise<void> =
         await archivo.close()
         console.log(`Nota guardada correctamente en 'AppData/${idNota}'`)
     } catch(error) {
-        console.log(`Error ${error}`)
+        console.log(`Internal error: ${error}`)
     }
 }
 
-export const allNotas = async(): Promise<Nota[] | undefined> => {
+export const findAllNotas = async(): Promise<Nota[] | undefined> => {
     try{
-        const files = await readDir('',{
+        const archivos = await readDir('',{
             baseDir: BaseDirectory.AppData
         });
         const notas: Nota[] = [];
-        for (const file of files) {
-            const contenidoArchivo = await readTextFile(file.name, {
+        for (const archivo of archivos) {
+            const contenidoArchivo = await readTextFile(archivo.name, {
                 baseDir: BaseDirectory.AppData
             });
             try {
                 const notaObj = JSON.parse(contenidoArchivo);
-                notas.push(new Nota(notaObj.id, notaObj.nombre, notaObj.contenido));
+                notas.push(notaObj)
+                //notas.push(new Nota(notaObj.id, notaObj.nombre, notaObj.contenido));
             } catch(error) {
                 console.log(`Archivo no json detectado`)
                 console.error(`${error}`)
@@ -51,4 +52,11 @@ export const allNotas = async(): Promise<Nota[] | undefined> => {
         console.error(`Error leyendo la carpeta:  ${error}`)
         return []
     }
+}
+
+export const getOneNota = async(idB: number): Promise<Nota | undefined> => {
+    
+    
+    
+    return 
 }
