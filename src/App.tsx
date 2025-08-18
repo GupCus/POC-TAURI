@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
-import { findAllNotas, addNota } from "./nota/nota.controller.ts";
+import { findAllNotas, addNota, getOneNota } from "./nota/nota.controller.ts";
 import { Nota } from "./nota/nota.entity.ts";
 import { BaseDirectory, exists, mkdir } from "@tauri-apps/plugin-fs";
 
@@ -10,6 +10,8 @@ function App() {
   const [contenido, setContenido] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [notas, setNotas] = useState<Nota[]>([])
+  const [notaId, setNotaId] = useState("");
+  const [notaEncontrada, setNotaEncontrada] = useState<Nota | null>(null);
 
   useEffect(() => {
     const inicializarApp = async () => {
@@ -19,7 +21,6 @@ function App() {
           baseDir: appDataPath
         })
         console.log(`Checkeando existencia de la carpeta de la app...`)
-        console.log(`${folderExists}`)
         if(!folderExists) {
           await mkdir('', {baseDir: appDataPath})
           console.log(`Carpeta creada.`)
@@ -52,6 +53,16 @@ function App() {
     const notasArray = await findAllNotas()
     setNotas(notasArray ?? [])
   }
+  const handleBuscarNota = async () => {
+    try {
+      const nota = await getOneNota(notaId);
+      setNotaEncontrada(nota ?? null);
+    } catch (error) {
+      setNotaEncontrada(null);
+      setMensaje("Error al buscar la nota.");
+      console.error(`Error: ${error}`);
+    }
+  };
 
   return (
     <main className="container">
@@ -87,6 +98,20 @@ function App() {
         ))}
       </ul>
       <div></div>
+      <h2>Buscar nota por ID</h2>
+      <input
+        type="text"
+        value={notaId}
+        onChange={(e) => setNotaId(e.target.value)}
+        placeholder="Ingrese el ID de la nota"
+        style={{ width: "100%" }}
+      />
+      <button type="button" onClick={handleBuscarNota}>Buscar nota</button>
+      {notaEncontrada && (
+        <div style={{border: "1px solid #ccc", padding: "10px", marginTop: "10px"}}>
+          <strong>{notaEncontrada.nombre}</strong>: {notaEncontrada.contenido}
+        </div>
+      )}
     </main>
   );
 }
