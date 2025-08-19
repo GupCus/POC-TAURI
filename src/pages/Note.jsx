@@ -1,19 +1,39 @@
-import { useNavigate, useParams } from "react-router-dom"
 import Atras from "../assets/atras.png"
 import Basura from "../assets/basura.png"
-import notasprueba from "../repository/repository.js";
+import { useNavigate, useParams } from "react-router-dom"
+import { useState,useEffect } from "react";
+import { getOneNota,deleteNota } from "../nota/nota.controller.ts";
+
 
 export default function Note(){
   const {id} = useParams();
   const navigate = useNavigate();
+  const [nota,setNota] = useState({});
 
-  //[TEMP HASTA QUE SE CREE EL BACK] acá encuentrá la nota por el id de la ruta
-  const nota = notasprueba.find((n)=> n.id === Number(id))
+  //acá encuentrá la nota por el id de la ruta
+  useEffect(() => {
+    if (id != null) {
+      async function getNota() {
+        try {
+          const n = await getOneNota(id);
+          if (n) {
+            setNota({id: id , titulo: n.nombre, texto:n.contenido})
+          }
+        } catch (error) {
+          console.error(`Error: ${error}`);
+        }
+      }
+      getNota();
+    }
+  }, []);
 
   //[TEMP HASTA QUE SE CREE EL BACK] elimina la nota
-  function handlerDeletion(){
-    const ind= notasprueba.findIndex((n)=> n.id === Number(id))
-    notasprueba.splice(ind,1);
+  async function handlerDeletion(){
+    try {
+      await deleteNota(id);
+    } catch (error) {
+      console.error(`Error: ${error}`);
+    }
     navigate(-1);
   }
 

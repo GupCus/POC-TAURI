@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom"
 import MiniNote from "../components/MiniNote.jsx";
-import notasprueba from "../repository/repository.js";
 import { findAllNotas } from "../nota/nota.controller.js";
 import { useState,useEffect } from "react";
 

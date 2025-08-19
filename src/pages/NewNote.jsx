@@ -1,7 +1,6 @@
 import {useNavigate, useParams} from "react-router-dom"
 import Atras from "../assets/atras.png"
 import Guardar from "../assets/guardar.png"
-import notasprueba from "../repository/repository.js";
 import { useState,useEffect } from "react";
 import { addNota, putNota, getOneNota } from "../nota/nota.controller.js";
 
@@ -35,18 +34,18 @@ export default function NewNote(){
   //En caso de estar editando, carga lo existente
   useEffect(() => {
     if (id != null) {
-      async function fetchNota() {
+      async function getNota() {
         try {
           const nota = await getOneNota(id);
           if (nota) {
-            setTitulo(nota.titulo);
-            setTexto(nota.texto);
+            setTitulo(nota.nombre);
+            setTexto(nota.contenido);
           }
         } catch (error) {
           console.error(`Error: ${error}`);
         }
       }
-      fetchNota();
+      getNota();
     }
   }, []);
 
