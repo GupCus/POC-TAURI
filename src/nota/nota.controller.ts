@@ -1,19 +1,17 @@
 import { Nota } from "./nota.entity.ts"
+import { v4 as uuidv4 } from "uuid"
 import { BaseDirectory, create, readDir, readTextFile, remove } from "@tauri-apps/plugin-fs"
-
-
-async function contarNotas() {
-    const arrayNotas = await readDir('', {baseDir: BaseDirectory.AppData})
-    return arrayNotas.length
-} //arreglar vulnerabilidad
+import dayjs from "dayjs"
 
 export const addNota = async(nomb: string, contenido: string): Promise<void> => {
     //const id = Date.now()
-    const idNota = await contarNotas()
+    const idNota = uuidv4()
     const nota = new Nota(
             idNota.toString(),
             nomb,
-            contenido
+            contenido,
+            dayjs().toISOString(),
+            null
         )
     try{
         const archivo = await create(`${idNota}.json`, {baseDir: BaseDirectory.AppData})
@@ -59,13 +57,17 @@ export const getOneNota = async(idB: string): Promise<Nota | undefined> => {
 }
 
 export const putNota = async(idM: string, nuevoTitulo: string, nuevoContenido: string): Promise<Nota | undefined> => {
-    try {
+    try { //guardar fecha de creacion de la anterior nota antes de pisarla
+        const notaVieja = JSON.parse(await readTextFile(`${idM}.json`, {baseDir: BaseDirectory.AppData}))
         await remove(`${idM}.json`, {baseDir: BaseDirectory.AppData})
         const notaModificada = new Nota(
             idM,
             nuevoTitulo,
-            nuevoContenido
+            nuevoContenido,
+            notaVieja.createdAt, //usa la fecha de la nota vieja
+            dayjs().toISOString()
         )
+        console.log(notaModificada)
         const archivoMod = await create(`${idM}.json`, {baseDir: BaseDirectory.AppData})
         await archivoMod.write(new TextEncoder().encode(JSON.stringify(notaModificada, null, 2)))
         await archivoMod.close()

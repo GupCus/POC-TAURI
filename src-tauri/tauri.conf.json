@@ -19,19 +19,27 @@
     ],
     "security": {
       "csp": null,
-      "capabilities": [{
-         "identifier": "my-capability",
-          "description": "My application capability used for all windows",
-          "windows": ["*"],
-          "permissions": ["fs:allow-create", "fs:allow-read-text-file"]
-      },
+      "capabilities": [
       "default"
     ]
     }
   },
   "bundle": {
     "active": true,
-    "targets": "all",
+    "targets": "msi", "windows": {
+      "allowDowngrades": true,
+      "certificateThumbprint": null,
+      "digestAlgorithm": null,
+      "nsis": null,
+      "signCommand": null,
+      "timestampUrl": null,
+      "tsp": false,
+      "webviewInstallMode": {
+        "silent": true,
+        "type": "downloadBootstrapper"
+      },
+      "wix": null
+    },
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",

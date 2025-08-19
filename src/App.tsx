@@ -11,24 +11,28 @@ import NewNote from "./pages/NewNote.jsx";
 function App() {
   
     useEffect(() => {
-    const inicializarApp = async () => {
-      try{
-        const appDataPath = await BaseDirectory.AppData
-        const folderExists = await exists('',{
-          baseDir: appDataPath
-        })
-        console.log(`Checkeando existencia de la carpeta de la app...`)
-        if(!folderExists) {
-          await mkdir('', {baseDir: appDataPath})
-          console.log(`Carpeta creada.`)
-        } else {
-          console.log(`Carpeta ya existe.`)
+    const cont = 0
+    if(cont == 0){
+      const inicializarApp = async () => {
+        try{
+          const appDataPath = await BaseDirectory.AppData
+          const folderExists = await exists('',{
+            baseDir: appDataPath
+          })
+          console.log(`Checkeando existencia de la carpeta de la app...`)
+          if(!folderExists) {
+            await mkdir('', {baseDir: appDataPath})
+            console.log(`Carpeta creada.`)
+          } else {
+            console.log(`Carpeta ya existe.`)
+          }
+          cont + 1
+        } catch(error) {
+          console.error(`Error al ejecutar inicializarApp(): ${error}`)
         }
-      } catch(error) {
-        console.error(`Error al ejecutar inicializarApp(): ${error}`)
       }
+      inicializarApp()
     }
-    inicializarApp()
   }, [])
 
   return (

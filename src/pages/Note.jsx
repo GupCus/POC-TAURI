@@ -51,7 +51,7 @@ export default function Note(){
         </h1>
       </header>
       <main>
-        <div className="nota">
+        <div className="nota" style={{whiteSpace: "pre-line"}}>
           {nota.texto}
         </div>
       </main>
