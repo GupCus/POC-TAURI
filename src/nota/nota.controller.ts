@@ -5,7 +5,7 @@ import { BaseDirectory, create, readDir, readTextFile, remove } from "@tauri-app
 async function contarNotas() {
     const arrayNotas = await readDir('', {baseDir: BaseDirectory.AppData})
     return arrayNotas.length
-}
+} //arreglar vulnerabilidad
 
 export const addNota = async(nomb: string, contenido: string): Promise<void> => {
     //const id = Date.now()
@@ -15,14 +15,13 @@ export const addNota = async(nomb: string, contenido: string): Promise<void> => 
             nomb,
             contenido
         )
-
     try{
         const archivo = await create(`${idNota}.json`, {baseDir: BaseDirectory.AppData})
         await archivo.write(new TextEncoder().encode(JSON.stringify(nota, null, 2)))
         await archivo.close()
-        console.log(`Nota guardada correctamente en 'AppData/${idNota}'`)
+        console.log(`Nota guardada correctamente en 'AppData/${idNota}.json'`)
     } catch(error: any) {
-        console.error(`Internal error: ${error}`)
+        console.error(`Error al crear la nota: ${error}`)
     }
 }
 
@@ -39,7 +38,6 @@ export const findAllNotas = async(): Promise<Nota[] | undefined> => {
             try {
                 const notaObj = JSON.parse(contenidoArchivo);
                 notas.push(notaObj)
-                //notas.push(new Nota(notaObj.id, notaObj.nombre, notaObj.contenido));
             } catch(error: any) {
                 console.log(`Archivo no json detectado`)
                 console.error(`${error}`)
@@ -53,9 +51,11 @@ export const findAllNotas = async(): Promise<Nota[] | undefined> => {
 }
 
 export const getOneNota = async(idB: string): Promise<Nota | undefined> => {
-    const notaPlana = await readTextFile(`${idB}.json`, {baseDir: BaseDirectory.AppData})
-    const nota = JSON.parse(notaPlana)
-    return nota
+    try{
+        const notaPlana = await readTextFile(`${idB}.json`, {baseDir: BaseDirectory.AppData})
+        const nota = JSON.parse(notaPlana)
+        return nota
+    }catch{}
 }
 
 export const putNota = async(idM: string, nuevoTitulo: string, nuevoContenido: string): Promise<Nota | undefined> => {
