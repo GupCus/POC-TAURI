@@ -5,6 +5,7 @@ import Home from "./pages/Home.jsx";
 import Note from "./pages/Note.jsx";
 import NewNote from "./pages/NewNote.jsx";
 
+
 function App() {
   return (
     <Routes>
@@ -21,3 +22,14 @@ function App() {
 }
 
 export default App;
+
+/*  Componente principal App
+    Acá se definen las vistas y el layout común con react router dom.
+    La vista principal es el componente Home
+    Estructura directorios:
+      assets/ -> recursos varios
+      components/ -> componentes React que no son vistas por si mismas
+      pages/ -> Vistas
+      styles/ -> estilos css de todos los componentes
+
+*/

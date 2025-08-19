@@ -11,7 +11,7 @@ export default function Home(){
   };
 
   //acá van a ser notas que le pidamos al back, por ahora creo ejemplos
-  const listanotas = notasprueba.map((n,i) =>
+  const listanotas = notasprueba.map((n) =>
       <MiniNote key={n.id} titulo={n.titulo} texto={n.texto} handler={() => handleClick(n.id)}/>
       )
 
