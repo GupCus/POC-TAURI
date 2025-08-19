@@ -1,23 +1,16 @@
-import React, { useState, useEffect } from "react";
-import "./App.css";
-import { findAllNotas, addNota, getOneNota, putNota, deleteNota } from "./nota/nota.controller.ts";
-import { Nota } from "./nota/nota.entity.ts";
-import { BaseDirectory, exists, mkdir } from "@tauri-apps/plugin-fs";
+import { Routes,Route } from "react-router-dom";
+import { useEffect } from "react";
+import { BaseDirectory,mkdir,exists } from "@tauri-apps/plugin-fs";
+import "./styles/App.css";
+import RootLayout from "./layouts/RootLayout.jsx";
+import Home from "./pages/Home.jsx";
+import Note from "./pages/Note.jsx";
+import NewNote from "./pages/NewNote.jsx";
 
 
 function App() {
-  const [titulo, setTitulo] = useState("")
-  const [contenido, setContenido] = useState("");
-  const [mensaje, setMensaje] = useState("");
-  const [notas, setNotas] = useState<Nota[]>([])
-  const [notaId, setNotaId] = useState("");
-  const [notaEncontrada, setNotaEncontrada] = useState<Nota | null>(null);
-  const [modId, setModId] = useState("");
-  const [modTitulo, setModTitulo] = useState("");
-  const [modContenido, setModContenido] = useState("");
-  const [delId, setDelId] = useState("");
-
-  useEffect(() => {
+  
+    useEffect(() => {
     const inicializarApp = async () => {
       try{
         const appDataPath = await BaseDirectory.AppData
@@ -31,8 +24,6 @@ function App() {
         } else {
           console.log(`Carpeta ya existe.`)
         }
-        
-        
       } catch(error) {
         console.error(`Error al ejecutar inicializarApp(): ${error}`)
       }
@@ -40,142 +31,29 @@ function App() {
     inicializarApp()
   }, [])
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const tituloCorregido = titulo.endsWith('.json') ? titulo : `${titulo}.json`
-      // Guarda la nota con nombre indicado, con '.json' al final
-      await addNota(tituloCorregido, contenido);
-      setMensaje("¡Nota guardada correctamente!");
-      setContenido("");
-    } catch (error) {
-      setMensaje("Error al guardar la nota.");
-      console.error(`Error: ${error}`)
-    }
-  };
-  const obtenerNotas = async () => {
-    const notasArray = await findAllNotas()
-    setNotas(notasArray ?? [])
-  }
-  const handleBuscarNota = async () => {
-    try {
-      const nota = await getOneNota(notaId);
-      setNotaEncontrada(nota ?? null);
-    } catch (error) {
-      setNotaEncontrada(null);
-      setMensaje("Error al buscar la nota.");
-      console.error(`Error: ${error}`);
-    }
-  };
-  const handleModificarNota = async () => {
-    try {
-      await putNota(modId, modTitulo, modContenido);
-      setMensaje("¡Nota modificada correctamente!");
-      setModId("");
-      setModTitulo("");
-      setModContenido("");
-      obtenerNotas();
-    } catch (error) {
-      setMensaje("Error al modificar la nota.");
-      console.error(`Error: ${error}`);
-    }
-  };
-
-  const handleEliminarNota = async () => {
-    try {
-      await deleteNota(delId);
-      setMensaje("¡Nota eliminada correctamente!");
-      setDelId("");
-      obtenerNotas();
-    } catch (error) {
-      setMensaje("Error al eliminar la nota.");
-      console.error(`Error: ${error}`);
-    }
-  };
-
   return (
-    <main className="container">
-      <h1>Welcome to MiniNotes</h1>
-
-      <div className="row">
-        <form onSubmit={handleSubmit}>
-          <textarea 
-            value={titulo} 
-            placeholder="Nombre de su nota"
-            onChange={(e) => setTitulo(e.target.value)}
-            rows={1}
-            style={{width: "100%"}}
-          />
-          <textarea
-            value={contenido}
-            onChange={(e) => setContenido(e.target.value)}
-            placeholder="Escribe tu nota aquí..."
-            rows={5}
-            style={{ width: "100%" }}
-          />
-          <button type="submit">Guardar nota</button>
-          {mensaje && <div>{mensaje}</div>}
-        </form>
-      </div>
-      <h2>notas existentes</h2>
-      <button type="button" onClick={obtenerNotas}>obtener notas</button>
-      <ul>
-        {notas.map((nota) => (
-          <li key={nota.id}>
-            <strong>{nota.nombre}</strong>: {nota.contenido}
-          </li>
-        ))}
-      </ul>
-      <div></div>
-      <h2>Buscar nota por ID</h2>
-      <input
-        type="text"
-        value={notaId}
-        onChange={(e) => setNotaId(e.target.value)}
-        placeholder="Ingrese el ID de la nota"
-        style={{ width: "100%" }}
-      />
-      <button type="button" onClick={handleBuscarNota}>Buscar nota</button>
-      {notaEncontrada && (
-        <div style={{border: "1px solid #ccc", padding: "10px", marginTop: "10px"}}>
-          <strong>{notaEncontrada.nombre}</strong>: {notaEncontrada.contenido}
-        </div>
-      )}
-      <h2>Modificar nota</h2>
-      <input
-        type="text"
-        value={modId}
-        onChange={(e) => setModId(e.target.value)}
-        placeholder="ID de la nota a modificar"
-        style={{ width: "100%" }}
-      />
-      <input
-        type="text"
-        value={modTitulo}
-        onChange={(e) => setModTitulo(e.target.value)}
-        placeholder="Nuevo nombre de la nota"
-        style={{ width: "100%" }}
-      />
-      <textarea
-        value={modContenido}
-        onChange={(e) => setModContenido(e.target.value)}
-        placeholder="Nuevo contenido de la nota"
-        rows={3}
-        style={{ width: "100%" }}
-      />
-      <button type="button" onClick={handleModificarNota}>Modificar nota</button>
-
-      <h2>Eliminar nota</h2>
-      <input
-        type="text"
-        value={delId}
-        onChange={(e) => setDelId(e.target.value)}
-        placeholder="ID de la nota a eliminar"
-        style={{ width: "100%" }}
-      />
-      <button type="button" onClick={handleEliminarNota}>Eliminar nota</button>
-    </main>
+    <Routes>
+      <Route path="/" element={<RootLayout />}>
+        <Route index element={<Home/>}/>
+        <Route path="notes">
+          <Route path=":id" element={<Note/>}/>
+          <Route path="nueva" element={<NewNote/>}/>
+          <Route path="nueva/:id" element={<NewNote/>}/>
+        </Route>
+      </Route>
+    </Routes>
   );
 }
 
 export default App;
+
+/*  Componente principal App
+    Acá se definen las vistas y el layout común con react router dom.
+    La vista principal es el componente Home
+    Estructura directorios:
+      assets/ -> recursos varios
+      components/ -> componentes React que no son vistas por si mismas
+      pages/ -> Vistas
+      styles/ -> estilos css de todos los componentes
+
+*/
