@@ -30,7 +30,7 @@ export default function Home(){
         </h1>
     </header>
     <div className="home-grid">
-      {(listnota.map((n) => <MiniNote key={n.id} titulo={n.nombre} texto={n.contenido} handler={() => handleClick(n.id)}/>))}
+      {(listnota.map((n) => <MiniNote key={n.id} titulo={n.nombre} texto={n.contenido} fechcreado={n.createdAt} fechUpdate={n.updatedAt} handler={() => handleClick(n.id)}/>))}
     </div>
     </div>
   )

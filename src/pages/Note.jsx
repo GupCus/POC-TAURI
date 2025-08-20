@@ -17,7 +17,7 @@ export default function Note(){
         try {
           const n = await getOneNota(id);
           if (n) {
-            setNota({id: id , titulo: n.nombre, texto:n.contenido})
+            setNota({id: id , titulo: n.nombre, texto:n.contenido, fechUpdate:n.updatedAt, fechcreado:n.createdAt})
           }
         } catch (error) {
           console.error(`Error: ${error}`);
@@ -27,7 +27,7 @@ export default function Note(){
     }
   }, []);
 
-  //[TEMP HASTA QUE SE CREE EL BACK] elimina la nota
+  //elimina la nota
   async function handlerDeletion(){
     try {
       await deleteNota(id);
@@ -37,21 +37,43 @@ export default function Note(){
     navigate(-1);
   }
 
+  function diferenciaFechas(unaFecha){
+    if(unaFecha === null) return null;
+
+    const ahora = new Date()
+    const fecha = new Date(unaFecha).getTime()
+    const diferencia = ahora - fecha
+
+    if(diferencia >= 24*60*60*1000){
+      return(<>Modificado hace: {Math.floor(diferencia / (24*60*60*1000))} d. </>)
+    }else if(diferencia >= 60*60*1000){
+      return(<>Modificado hace: {Math.floor(diferencia / (60*60*1000))} h. </>)
+    } else{
+      return(<>Modificado hace: {Math.floor(diferencia / (60*1000))} min. </>)
+    }
+  }
+
   return(
     <div className="page">   
       <header>
-        <h1 style={{ display: "flex", gap: "0" }}>
+        <h1>
           {nota.titulo}
-          <button className="boton boton-arriba" style={{ right: "120px"  }} onClick={handlerDeletion}>
-            <img src={Basura} alt= "Eliminar" />
-          </button>
-          <button className="boton boton-arriba" onClick={()=>navigate(-1)}>
-            <img src={Atras} alt= "Volver" />
-          </button>
         </h1>
+        <div>
+        <p className="fechas" style={{ fontSize: "0.8em" }}>
+          {diferenciaFechas(nota.fechUpdate)} 
+          Creado en: {new Date(nota.fechcreado).toLocaleDateString()}
+        </p>
+        </div>
+        <button className="boton boton-arriba" style={{ right: "120px"  }} onClick={handlerDeletion}>
+          <img src={Basura} alt= "Eliminar" />
+        </button>
+        <button className="boton boton-arriba" onClick={()=>navigate(-1)}>
+          <img src={Atras} alt= "Volver" />
+        </button>
       </header>
       <main>
-        <div className="nota" style={{whiteSpace: "pre-line"}}>
+        <div className="nota">
           {nota.texto}
         </div>
       </main>

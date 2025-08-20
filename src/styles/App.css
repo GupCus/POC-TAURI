@@ -53,6 +53,10 @@ h1 {
   text-align: left;
 }
 
+.fechas {
+  color: #7b7b7bff;
+}
+
 /* Página, dos filas una para el header, el resto para el body */
 .page {
   min-height: 97vh;
@@ -126,12 +130,12 @@ h1 {
 .mininote {
   position: relative;
   background: var(--yellow-100);
-  padding: 14px 12px 14px 12px;
+  padding: 14px 18px;
   min-height: 120px;
   text-align: left;
   cursor: pointer;
   border-radius: 3px;
-  
+  overflow-y: clip;
   /*animación*/
   transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
 }
@@ -156,7 +160,7 @@ h1 {
   transform: translateY(-2px);
 }
 .mininote:hover::before {
-  transform: translateY(-1px);
+  transform: translateY(-20px);
 }
 
 .mininote h3 {
@@ -169,6 +173,9 @@ h1 {
   margin: 0;
   color: var(--text-muted);
   font-size: 0.95rem;
+  white-space: pre-line;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 /*estilo nota*/
@@ -176,14 +183,19 @@ h1 {
   background: var(--yellow-100);
   border: 1px solid var(--border);
   border-radius: 12px;
-  margin: 16px 20px 10px;
-  padding: 12px 14px;
+  margin: 0px 20px 10px;
+  padding: 16px 20px;
+  width: 94vw;
+  box-sizing: border-box;
+  overflow-x: auto;
   text-align: left;
   box-shadow: 0 1px 2px rgba(0, 0, 0, .08);
+  white-space: pre-line;
   /* estira hasta abajo */
   flex: 1;
   display: flex;
   flex-direction: column;
+
 }
 
 .input-texto,
@@ -193,7 +205,7 @@ h1 {
     Helvetica,
     Arial,
     sans-serif;
-  width: 100%;
+  width: 99%;
   height: 100%;
   border: none;
   background: transparent;
@@ -201,6 +213,7 @@ h1 {
   font-size: 16px;
   line-height: 24px;
   font-weight: 400;
+  overflow-x: auto;
 }
 .input-titulo,
 .input-titulo::placeholder{
@@ -228,7 +241,7 @@ h1 {
     --bg-dark: #716536;
     --surface-dark: #262115;
     --text-dark: #000000;
-    --text-muted-dark: #D6CFB8;
+    --text-muted-dark: #2b2b2b;
     --boton-dark: var(--yellow-500);
     --boton-hover-dark: #E5B93A;
 
@@ -268,6 +281,9 @@ h1 {
   }
   .boton:hover {
     background: var(--boton-hover-dark);
+  }
+  .fechas {
+    color: var(--text-muted-dark);
   }
 }
 
