@@ -30,6 +30,7 @@ export const findAllNotas = async(): Promise<Nota[] | undefined> => {
         });
         const notas: Nota[] = [];
         for (const archivo of archivos) {
+            if(archivo.name.endsWith(`.json`)){
             const contenidoArchivo = await readTextFile(archivo.name, {
                 baseDir: BaseDirectory.AppData
             });
@@ -40,6 +41,7 @@ export const findAllNotas = async(): Promise<Nota[] | undefined> => {
                 console.log(`Archivo no json detectado`)
                 console.error(`${error}`)
             }
+        }
         }
         return notas;
         } catch(error: any) {
